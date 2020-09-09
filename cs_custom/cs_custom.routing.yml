@@ -1,0 +1,7 @@
+cs_custom.style_guide:
+  path: '/style-guide'
+  defaults:
+    _controller: '\Drupal\cs_custom\Controller\StyleGuideController::content'
+    _title: 'Style Guide'
+  requirements:
+    _permission: 'administer site configuration'

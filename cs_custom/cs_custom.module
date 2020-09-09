@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * Implements hook_page_attachments().
+ */
+function cs_custom_page_attachments_alter(&$page) {
+  // Remove Intercom chat from Admin pages.
+  if (\Drupal::service('router.admin_context')->isAdminRoute()) {
+    foreach ($page["#attached"]["library"] as $key => $library) {
+      if ($library == 'intercom/intercom') {
+        unset($page["#attached"]["library"][$key]);
+        break;
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_module_implements_alter().
+ */
+function cs_custom_module_implements_alter(&$implementations, $hook) {
+  if ($hook == 'page_attachments_alter') {
+    if (isset($implementations['cs_custom'])) {
+      $cs_custom = $implementations['cs_custom'];
+      unset($implementations['cs_custom']);
+      $implementations['cs_custom'] = $cs_custom;
+    }
+  }
+}

@@ -1,0 +1,6 @@
+cs_custom.style_guide:
+  route_name: cs_custom.style_guide
+  title: Style Guide
+  description: 'See the Style Guide page.'
+  parent: system.themes_page
+  weight: 4
