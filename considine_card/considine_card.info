@@ -1,0 +1,4 @@
+name = Considine Card
+description = "Provides custom functionality related to card workflow for considine site"
+core = 7.x
+package = Considine

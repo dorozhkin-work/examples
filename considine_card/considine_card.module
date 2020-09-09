@@ -1,0 +1,561 @@
+<?php
+
+/**
+ * @file
+ * Considine card main module file.
+ */
+
+define('CONSIDINE_CARD_PRODUCT_TYPE', 'card');
+define('CONSIDINE_CARD_TYPE', 'card');
+define('CONSIDINE_CARD_SESSION_KEY', 'considine_cards');
+define('CONSIDINE_CARD_STATUS_NEW', 'new');
+define('CONSIDINE_CARD_STATUS_WORKFLOW', 'workflow');
+define('CONSIDINE_CARD_STATUS_PROCESSING', 'processing');
+define('CONSIDINE_CARD_STATUS_COMPLETED', 'completed');
+define('CONSIDINE_CARD_STATUS_CART', 'cart');
+define('CONSIDINE_CARD_WORKFLOW_IMAGE_STYLE', 'card_workflow');
+
+require_once 'includes/considine-card.inc';
+require_once 'includes/considine-card.form.inc';
+require_once 'includes/considine-card.price.inc';
+require_once 'includes/considine-card.steps.inc';
+require_once 'includes/considine-card.preprocess.inc';
+
+
+/**
+ * Implements hook_menu().
+ */
+function considine_card_menu() {
+  $items = array();
+
+  $items['considine_export/line_item/%'] = array(
+    'title'       => 'Export',
+    'description' => 'Export line item into xml',
+    'type'        => MENU_CALLBACK,
+    'access arguments'  => array('administer site configuration'),
+    'page callback' => 'considine_card_line_item_export_callback',
+    'page arguments' => array(2),
+  );
+
+  return $items;
+}
+
+function considine_card_line_item_export_callback($line_item_id) {
+  $response = '';
+  $line_item = commerce_line_item_load($line_item_id);
+  $response = considine_card_export_line_item($line_item, FALSE);
+  ob_end_clean();
+  drupal_add_http_header('Connection', 'close', FALSE);
+  drupal_add_http_header('Content-Length', strlen($response['content']), TRUE);
+  drupal_add_http_header('Content-Type', 'text/xml; charset=utf-8', TRUE);
+  drupal_add_http_header('Content-disposition: attachment; filename="' . $response['name'] . '.xml"', TRUE);
+  echo $response['content'];
+  exit;
+}
+
+function considine_card_field_widget_form_alter(&$element, &$form_state, &$context) {
+
+  if (isset($element['#field_name'])) {
+    if ($element['#field_name'] == 'commerce_line_items' && $element['#theme'] == 'commerce_line_item_manager') {
+       $element['#theme'] = 'considine_card_commerce_line_item_manager';
+    }
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function considine_card_theme() {
+  $themes = array(
+    'considine_card_workflow' => array(
+      'variables' => array(
+        'header' => NULL,
+        'progress' => NULL,
+        'content' => NULL
+      ),
+      'path' => drupal_get_path('module', 'considine_card') . '/templates',
+      'template' => 'considine-card-workflow',
+    ),
+    'considine_card_workflow_header' => array(
+      'variables' => array('name' => NULL),
+      'path' => drupal_get_path('module', 'considine_card') . '/templates',
+      'template' => 'considine-card-workflow-header',
+    ),
+    'considine_card_workflow_progress' => array(
+      'variables' => array('items' => array()),
+      'path' => drupal_get_path('module', 'considine_card') . '/templates',
+      'template' => 'considine-card-workflow-progress',
+    ),
+    'considine_card_next_button' => array(
+      'variables' => array('page' => array(), 'saved' => TRUE),
+      'function' => 'considine_card_next_button',
+    ),
+    'considine_card_slider_controls' => array(
+      'variables' => array(),
+      'function' => 'considine_card_slider_controls',
+    ),
+    'considine_card_template' => array(
+      'variables' => array(
+        'attributes' => array(),
+        'content' => array()
+      ),
+      'path' => drupal_get_path('module', 'considine_card') . '/templates',
+      'template' => 'considine-card-template',
+    ),
+    'considine_card_save_name_form' => array(
+      'render element' => 'form',
+      'path' => drupal_get_path('module', 'considine_card') . '/templates',
+      'template' => 'considine-card-save-name-form',
+    ),
+    'considine_card_commerce_line_item_manager' => array(
+      'render element' => 'form',
+    ),
+  );
+  return $themes;
+}
+
+/**
+ * Themes the line item manager widget form element.
+ */
+function theme_considine_card_commerce_line_item_manager($variables) {
+  drupal_add_css(drupal_get_path('module', 'commerce_line_item') . '/theme/commerce_line_item.admin.css');
+
+  $form = $variables['form'];
+  $rows = array();
+
+  // Add each line item to the table.
+  foreach (element_children($form['line_items']) as $line_item_id) {
+    $line_item = $form['line_items'][$line_item_id]['line_item']['#value'];
+    $row = array(
+      drupal_render($form['line_items'][$line_item_id]['remove']),
+      drupal_render($form['line_items'][$line_item_id]['title']),
+      drupal_render($form['line_items'][$line_item_id]['line_item_label']),
+      drupal_render($form['line_items'][$line_item_id]['commerce_unit_price']),
+      drupal_render($form['line_items'][$line_item_id]['quantity']),
+      drupal_render($form['line_items'][$line_item_id]['commerce_total']),
+    );
+    if (in_array($line_item->type, array('card', 'envelope'))) {
+      $row[] = l('Download XML', 'considine_export/line_item/' . $line_item_id);
+    }
+
+    $rows[] = $row;
+  }
+  $form['#header'][] = t('XML');
+  // Setup the table's variables array and build the output.
+  $table_variables = array(
+    'caption' => check_plain($form['#title']),
+    'header' => $form['#header'],
+    'rows' => $rows,
+    'empty' => $form['#empty'],
+  );
+
+  $output = theme('table', $table_variables) . drupal_render($form['actions']);
+
+  return '<div id="line-item-manager" class="clearfix">' . $output . '</div>';
+}
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ *
+ * @param string $owner
+ *   The system name of the module owning the plugin type for which a base
+ *   directory location is being requested.
+ *
+ * @param string $plugin_type
+ *   The name of the plugin type for which a base directory is being requested.
+ *
+ * @return path
+ *   The path where CTools' plugin system should search for plugin files,
+ *   relative to your module's root. Omit leading and trailing slashes.
+ */
+function considine_card_ctools_plugin_directory($owner, $plugin_type) {
+  if ($owner == 'ctools' &&  in_array($plugin_type, array('content_types'))) {
+    return 'plugins/' . $plugin_type;
+  }
+}
+
+/**
+ * Implements hook_entity_info_alter().
+ */
+function considine_card_entity_info_alter(&$entity_info) {
+  $entity_info['node']['view modes']['card_workflow'] = array(
+    'label' => t('Card workflow'),
+    'custom settings' => TRUE,
+  );
+  $entity_info['entityform']['view modes']['card_workflow'] = array(
+    'label' => t('Card workflow'),
+    'custom settings' => TRUE,
+  );
+  $entity_info['entityform']['view modes']['cart_details'] = array(
+    'label' => t('Cart details'),
+    'custom settings' => TRUE,
+  );
+  $entity_info['entityform']['view modes']['basket_card'] = array(
+    'label' => t('Basket card'),
+    'custom settings' => TRUE,
+  );
+  $entity_info['entityform']['view modes']['basket_envelope'] = array(
+    'label' => t('Basket envelope'),
+    'custom settings' => TRUE,
+  );
+}
+
+
+/**
+ * Implements hook_entity_presave().
+ * @param $entity
+ * @param $type
+ */
+function considine_card_entity_presave($entity, $type) {
+  if ($type == 'entityform') {
+    if ($entity->type == 'card') {
+
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_update().
+ * @param $entity
+ * @param $type
+ */
+function considine_card_entity_update($entity, $type) {
+  if ($type == 'entityform') {
+    if ($entity->type == 'card') {
+
+      $wrapper = entity_metadata_wrapper($type, $entity);
+      $status = $wrapper->field_card_status->value();
+      if (in_array($status, array('cart', 'workflow'))) {
+        $motif = $wrapper->field_card_motif->value();
+        if (!empty($motif)) {
+          $motif_color = $wrapper->field_card_motif->field_color->value();
+
+          $font_color = NULL;
+          $font_color_value = $wrapper->field_card_font_color->value();
+          if (!empty($font_color_value)) {
+            $font_color = $wrapper->field_card_font_color->field_color->value();
+          }
+          // Check if color doesn't match.
+          if ($font_color != $motif_color) {
+            // Getting motif step.
+            $motif_step = considine_card_steps_step($entity, 'cstep_motif');
+            // Getting motif options.
+            $motif_options = considine_card_step_options($motif_step);
+            if (!empty($motif_options)) {
+              $found = FALSE;
+              $card_motif_option_id = $wrapper->field_card_motif_option->raw();
+              // Getting motifs from option.
+              foreach ($motif_options as $motif_option) {
+                if ($card_motif_option_id != $motif_option->item_id) {
+                  continue;
+                }
+                $motif_option_wrapper = entity_metadata_wrapper('field_collection_item', $motif_option);
+                $motifs = $motif_option_wrapper->field_option_motif->value();
+                if (!empty($motifs)) {
+                  foreach ($motifs as $motif) {
+                    $motif_wrapper = entity_metadata_wrapper('field_collection_item', $motif);
+                    // Getting motif color.
+                    $color = $motif_wrapper->field_color->value();
+                    // Checking motif color and card font color.
+                    // Need to find related motif.
+                    if (drupal_strtolower($color) == drupal_strtolower($font_color)) {
+                      // Motif was found.
+                      $found = TRUE;
+                      $wrapper->field_card_motif = $motif_wrapper->value();
+                      break;
+                    }
+                  }
+                  if ($found) {
+                    break;
+                  }
+                }
+              }
+              if (!$found) {
+                $wrapper->field_card_motif = NULL;
+              }
+            }
+
+            $wrapper->save();
+          }
+        }
+      }
+    }
+  }
+}
+
+function considine_card_workflow_info() {
+  $items = array();
+  $items['cstep_type'] = array(
+    'step_option_field' => 'field_cstep_type_options',
+    'card_option_field' => 'field_card_type',
+    'card_option_field_item' => ''
+  );
+  $items['cstep_words'] = array(
+    'step_option_field' => '',
+    'card_option_field' => '',
+    'card_option_field_item' => ''
+  );
+  $items['cstep_paper'] = array(
+    'step_option_field' => 'field_cstep_paper_options',
+    'card_option_field' => 'field_card_paper_option',
+    'card_option_field_item' => 'field_card_paper'
+  );
+  $items['cstep_font'] = array(
+    'step_option_field' => 'field_cstep_font_options',
+    'card_option_field' => 'field_card_font',
+    'card_option_field_item' => 'field_card_font'
+  );
+  $items['cstep_border'] = array(
+    'step_option_field' => 'field_cstep_border_options',
+    'card_option_field' => 'field_card_border_option',
+    'card_option_field_item' => 'field_card_border'
+  );
+  $items['cstep_motif'] = array(
+    'step_option_field' => 'field_cstep_motif_options',
+    'card_option_field' => 'field_card_motif_option',
+    'card_option_field_item' => 'field_card_motif'
+  );
+  $items['cstep_envelope'] = array(
+    'step_option_field' => '',
+    'card_option_field' => '',
+    'card_option_field_item' => ''
+  );
+  $items['cstep_order'] = array(
+    'step_option_field' => '',
+    'card_option_field' => '',
+    'card_option_field_item' => ''
+  );
+  return $items;
+}
+
+function considine_card_workflow_item($type = '') {
+  if (empty($type)) {
+    return array();
+  }
+  $info = considine_card_workflow_info();
+  if (empty($info)) {
+    return array();
+  }
+  if (!empty($info[$type])) {
+    return $info[$type];
+  }
+  return array();
+}
+
+/**
+ * Saves card ID into session variable.
+ */
+function considine_card_session_save($entityform_id = NULL) {
+  if (empty($entityform_id)) {
+    return;
+  }
+
+  $key = CONSIDINE_CARD_SESSION_KEY;
+
+  if (empty($_SESSION[$key])) {
+    $_SESSION[$key] = array($entityform_id);
+  }
+  elseif (!in_array($entityform_id, $_SESSION[$key])) {
+    $_SESSION[$key][] = $entityform_id;
+  }
+}
+
+/**
+ * Check if card ID exists in session variable.
+ */
+function considine_card_session_exists($entityform_id = NULL) {
+  $key = CONSIDINE_CARD_SESSION_KEY;
+
+  if (!empty($entityform_id)) {
+    return !empty($_SESSION[$entityform_id]) && in_array($entityform_id, $_SESSION[$key]);
+  }
+  else {
+    // Otherwise look for any value.
+    return !empty($_SESSION[$key]);
+  }
+}
+
+/**
+ * Deletes all card IDs or a specific card ID from the session variable.
+ */
+function considine_card_session_delete($entityform_id = NULL) {
+  $key = CONSIDINE_CARD_SESSION_KEY;
+
+  if (!empty($_SESSION[$key])) {
+    if (!empty($entityform_id)) {
+      $_SESSION[$key] = array_diff($_SESSION[$key], array($entityform_id));
+    }
+    else {
+      unset($_SESSION[$key]);
+    }
+  }
+}
+
+/**
+ * Returns an array of card IDs stored in the session.
+ */
+function considine_card_session_ids() {
+  $key = CONSIDINE_CARD_SESSION_KEY;
+  return empty($_SESSION[$key]) ? array() : $_SESSION[$key];
+}
+
+/**
+ * Returns current user card ID.
+ */
+function considine_card_card_id($uid = 0) {
+  $statuses = array(CONSIDINE_CARD_STATUS_NEW, CONSIDINE_CARD_STATUS_WORKFLOW);
+  $ids = array();
+  $ids[$uid] = FALSE;
+  if ($uid) {
+    $query = new EntityFieldQuery();
+    $query->entityCondition('entity_type', 'entityform');
+    $query->entityCondition('bundle', 'card');
+    $query->propertyCondition('uid', $uid);
+    $query->fieldCondition('field_card_status', 'value', $statuses, 'IN');
+    $query->propertyOrderBy('created', 'DESC');
+    $query->range(0, 1);
+    $result = $query->execute();
+    if (!empty($result['entityform'])) {
+      $ids[$uid] = key($result['entityform']);
+    }
+  }
+  else {
+    if (considine_card_session_exists()) {
+      $card_session_ids = considine_card_session_ids();
+      $query = new EntityFieldQuery();
+      $query->entityCondition('entity_type', 'entityform');
+      $query->entityCondition('bundle', 'card');
+      $query->propertyCondition('uid', 0);
+      $query->fieldCondition('field_card_status', 'value', $statuses, 'IN');
+      $query->propertyCondition('entityform_id', $card_session_ids, 'IN');
+      $query->propertyOrderBy('created', 'DESC');
+      $query->range(0, 1);
+      $result = $query->execute();
+      if (!empty($result['entityform'])) {
+        $ids[$uid] = key($result['entityform']);
+      }
+    }
+    else {
+      $ids[$uid] = FALSE;
+    }
+  }
+
+  return $ids[$uid];
+}
+
+
+/**
+ * Loads the card for the specified user.
+ */
+function considine_card_card_load($uid = 0) {
+  $entityform_id = considine_card_card_id($uid);
+  if (!empty($entityform_id)) {
+    return entityform_load($entityform_id);
+  }
+  return FALSE;
+}
+
+function considine_card_add_to_cart($card) {
+  global $user;
+
+  $card_wrapper = entity_metadata_wrapper('entityform', $card);
+
+  $card_line_item = considine_card_add_to_cart_card($card);
+
+  $order = commerce_order_load($card_line_item->order_id);
+  $order_wrapper = entity_metadata_wrapper('commerce_order', $order);
+  $line_items = $order_wrapper->commerce_line_items->value();
+  $count = considine_commerce_line_items_count($line_items, array('card'));
+
+  considine_card_generate($card, $card_line_item->order_id, $count);
+
+  $enevelope_quantity = $card_wrapper->field_card_envelope_quantity->value();
+  if (!empty($enevelope_quantity)) {
+    considine_card_add_to_cart_envelope($card);
+  }
+
+  // Update card status.
+  $card_wrapper->field_card_status = CONSIDINE_CARD_STATUS_CART;
+  $card_wrapper->save();
+}
+
+function considine_card_add_to_cart_card($card) {
+  global $user;
+  $line_item = considine_commerce_card_line_item_new($card);
+  if (!empty($line_item)) {
+    $line_item_added = considine_commerce_card_line_item_add($line_item, $user->uid);
+    return $line_item_added;
+  }
+  return NULL;
+}
+
+function considine_card_add_to_cart_envelope($card) {
+ global $user;
+  $line_item = considine_commerce_envelope_line_item_new($card);
+  if (!empty($line_item)) {
+    $line_item_added = considine_commerce_envelope_line_item_add($line_item, $user->uid);
+  }
+}
+
+
+function considine_card_queue_card_pdf($card, $order_id = NULL, $item_id = NULL) {
+
+  $queue = new SystemQueue('considine_card_queue_pdf');
+  // There is no harm in trying to recreate existing.
+  $queue->createQueue();
+  // Queue the string.
+  $queue->createItem(
+    array(
+      'order_id' => $order_id,
+      'card_id' => $card->entityform_id,
+      'item_id' => $item_id
+    )
+  );
+
+  watchdog('Considine', 'The card !card_id has been queued to generate card pdf.', array('!card_id' => $card->entityform_id));
+
+}
+
+/**
+ * Implementation of hook_cronapi()
+ */
+function considine_card_cronapi($op, $job = NULL) {
+  $items['considine_card_cron'] = array(
+    'description' => 'Generate card PDFs.',
+    'rule' => '*/5 * * * *',
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_cron().
+ */
+function considine_card_cron() {
+  // Fetch the queue of card to generate pdf for.
+  $queue = new SystemQueue('considine_card_queue_pdf');
+  $queue_items_count = $queue->numberOfItems();
+  $default_process_items_count = variable_get('considine_card_queue_pdf_process_count', 10);
+  $process_items_count = $default_process_items_count;
+  if ($queue_items_count < $default_process_items_count || $default_process_items_count == 0) {
+    $process_items_count = $queue_items_count;
+  }
+  // Find eligable cards.
+  for ($i = 0; $i < $process_items_count; $i++) {
+    $item = $queue->claimItem($lease_time = 30);
+    if ($item) {
+      $data = $item->data;
+      $card = entityform_load($data['card_id']);
+      if (empty($card)) {
+        $queue->deleteItem($item);
+        watchdog('Considine', "The card !card_id doesn't exists during card pdf generation.", array('!card_id' => $card->entityform_id));
+        continue;
+      }
+      $generate = considine_card_generate_pdf($card, $data['order_id'], $data['item_id']);
+      if ($generate) {
+        watchdog('Considine', "The card !card_id pdf was generated.", array('!card_id' => $card->entityform_id));
+        $queue->deleteItem($item);
+      }
+    }
+  }
+}

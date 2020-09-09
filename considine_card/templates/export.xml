@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<PDFDocument xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Quantifier="" IssueUnit="250" ProofStamp="false" Filename="E:\Applications\broker.print-maestro.com\Temp\f36cc83d-6067-4f0b-b646-49023d56fe00.pdf">
+  <AvailableFonts></AvailableFonts>
+  <AdditionalInformation />
+  <StockEmailSent>false</StockEmailSent>
+  <StockControl>false</StockControl>
+  <ReorderStockAmount>0</ReorderStockAmount>
+  <MinimumStockLevel>0</MinimumStockLevel>
+  <RequiredAuthorisation>false</RequiredAuthorisation>
+  <OrderDisplayBlock>Block_0</OrderDisplayBlock>
+  <GroupPricing>false</GroupPricing>
+  <Thumbnail>!THUMBNAIL!</Thumbnail>
+  <OrderNumber>!ORDER_NUMBER!</OrderNumber>
+  <ItemNumber>!ITEM_NUMBER!</ItemNumber>
+  <DateOrdered>!ORDERED_DATE!</DateOrdered>
+  <Quantity>!QUANTITY!</Quantity>
+  <ItemPrice>!ITEM_PRICE!</ItemPrice>
+  <OrderPrice>!ORDER_PRICE!</OrderPrice>
+  <OrderTax></OrderTax>
+  <ProductName>!PRODUCT_NAME!</ProductName>
+  <ProductCode>!PRODUCT_CODE!</ProductCode>
+  <ProductDescription>!PRODUCT_DESCRIPTION!</ProductDescription>
+  <ProductQuantifier>
+  </ProductQuantifier>
+  <ProductUnitIssue>!QUANTITY!</ProductUnitIssue>
+  <OrderDisplayBlockName></OrderDisplayBlockName>
+  <OrderDisplayBlockValue></OrderDisplayBlockValue>
+  <UserEmail>!USER_EMAIL!</UserEmail>
+  <UserName>!USER_NAME!</UserName>
+  <PriceBandCode></PriceBandCode>
+  <PriceBandName></PriceBandName>
+  <CostCentreCode></CostCentreCode>
+  <CostCentreName></CostCentreName>
+  <CsdPrintProcess>thermo</CsdPrintProcess>
+  <CsdTextColour>!FONT_COLOR!</CsdTextColour>
+  <CsdBorderColour>!BORDER_COLOR!</CsdBorderColour>
+  <CsdMotif>!MOTIF!</CsdMotif>
+<CsdMatlFront>!BACKGROUND_COLOR!</CsdMatlFront>
+<CsdMatlBack>!BACK_COLOR!</CsdMatlBack>
+<CsdContactTel1>!TELEPHONE1!</CsdContactTel1>
+<CsdContactTel2></CsdContactTel2>
+<OrderFields>
+  <OrderField name="PURCHASE ORDER NUMBER (MANDATORY)">!ORDER_NUMBER!</OrderField>
+</OrderFields>
+<DeliveryAddress>!SHIPPING_ADDRESS!</DeliveryAddress>
+</PDFDocument>
