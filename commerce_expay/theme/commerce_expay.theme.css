@@ -1,0 +1,11 @@
+
+.expay-payment-method-logo {
+  width: 40px;
+  height: 25px;
+  vertical-align: middle;
+  padding: 0px 5px 0px 5px;
+}
+.expay-complete-links {
+  margin: 20px 0px;
+  clear: both;
+}

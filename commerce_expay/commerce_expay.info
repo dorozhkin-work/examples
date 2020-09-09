@@ -1,0 +1,6 @@
+name = Commerce Expay
+description = Implements Expay payment services for use with Drupal Commerce.
+package = Commerce (Expay)
+dependencies[] = commerce_payment
+version = 7.x-1.0
+core = 7.x

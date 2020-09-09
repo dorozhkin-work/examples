@@ -1,0 +1,353 @@
+# $Id$
+#
+# LANGUAGE translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  commerce_expay.admin.inc: n/a
+#  commerce_expay.rules.inc: n/a
+#  commerce_expay.info: n/a
+#  commerce_expay.module: n/a
+#  includes/commerce_expay.checkout_pane.inc: n/a
+#  includes/commerce_expay.inc: n/a
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2015-07-28 18:24+0300\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: commerce_expay.admin.inc:14
+msgid "Prod"
+msgstr ""
+
+#: commerce_expay.admin.inc:15
+msgid "Sandbox"
+msgstr ""
+
+#: commerce_expay.admin.inc:18
+msgid "Work mode"
+msgstr ""
+
+#: commerce_expay.admin.inc:21
+msgid "Chose work mode."
+msgstr ""
+
+#: commerce_expay.admin.inc:24
+msgid "When you activate the \"sandbox\", all transactions will be the test, under the regime of \"prod\", all transactions will be real."
+msgstr ""
+
+#: commerce_expay.admin.inc:28
+msgid "Merchant key"
+msgstr ""
+
+#: commerce_expay.admin.inc:31
+msgid "Merchant key in Server system."
+msgstr ""
+
+#: commerce_expay.admin.inc:36
+msgid "Secret key"
+msgstr ""
+
+#: commerce_expay.admin.inc:39
+msgid "Secret key in Server system."
+msgstr ""
+
+#: commerce_expay.admin.inc:44
+msgid "IP Server"
+msgstr ""
+
+#: commerce_expay.admin.inc:47
+msgid "IP address of request Server system. You could use several IP addresses with \",\" sign. For example : 192.168.11.1, 127.0.0.1."
+msgstr ""
+
+#: commerce_expay.admin.inc:52
+msgid "Debug mode"
+msgstr ""
+
+#: commerce_expay.admin.inc:58
+msgid "Use fetched logos"
+msgstr ""
+
+#: commerce_expay.admin.inc:64
+msgid "Callback URL"
+msgstr ""
+
+#: commerce_expay.admin.inc:66
+msgid "Setup this URL as Callback URL."
+msgstr ""
+
+#: commerce_expay.admin.inc:71
+msgid "URL as succeess_url"
+msgstr ""
+
+#: commerce_expay.admin.inc:73
+msgid "Setup this URL as succeess_url."
+msgstr ""
+
+#: commerce_expay.admin.inc:78
+msgid "URL as waiting_url"
+msgstr ""
+
+#: commerce_expay.admin.inc:80
+msgid "Setup this URL as waiting_url."
+msgstr ""
+
+#: commerce_expay.admin.inc:85
+msgid "URL as reject_url"
+msgstr ""
+
+#: commerce_expay.admin.inc:87
+msgid "Setup this URL as reject_url."
+msgstr ""
+
+#: commerce_expay.rules.inc:15
+msgid "After transaction updated on Expay callback."
+msgstr ""
+
+#: commerce_expay.rules.inc:16;32;94 commerce_expay.info:0
+msgid "Commerce Expay"
+msgstr ""
+
+#: commerce_expay.rules.inc:19
+msgid "Expay callback method"
+msgstr ""
+
+#: commerce_expay.rules.inc:23;39
+msgid "Comemrce payment transaction"
+msgstr ""
+
+#: commerce_expay.rules.inc:31
+msgid "After transaction updated via getStatus."
+msgstr ""
+
+#: commerce_expay.rules.inc:36;83
+msgid "Order"
+msgstr ""
+
+#: commerce_expay.rules.inc:43
+msgid "Expay payment type"
+msgstr ""
+
+#: commerce_expay.rules.inc:45
+msgid "Can be two values: online and offline."
+msgstr ""
+
+#: commerce_expay.rules.inc:49
+msgid "Expay remote status"
+msgstr ""
+
+#: commerce_expay.rules.inc:79
+msgid "Update order transactions statuses by calling getStatus."
+msgstr ""
+
+#: commerce_expay.rules.inc:87
+msgid "Transactions with status to check"
+msgstr ""
+
+#: commerce_expay.rules.inc:141
+msgid "During update statuses of orders from gateway Expay has been errors"
+msgstr ""
+
+#: commerce_expay.module:147;157
+msgid "Payment canceled payment at the payment gateway."
+msgstr ""
+
+#: commerce_expay.module:154;533;697
+msgid "There was a problem processing your transaction. Please try again later."
+msgstr ""
+
+#: commerce_expay.module:275
+msgid "Payment using the !provider provider."
+msgstr ""
+
+#: commerce_expay.module:296
+msgid "Expay complete data"
+msgstr ""
+
+#: commerce_expay.module:332
+msgid "Some payments gateway are unavailable now."
+msgstr ""
+
+#: commerce_expay.module:408
+msgid "Please provide additional information"
+msgstr ""
+
+#: commerce_expay.module:445
+msgid "Wrong payment amount (< min)"
+msgstr ""
+
+#: commerce_expay.module:449
+msgid "Wrong payment amount (> max)"
+msgstr ""
+
+#: commerce_expay.module:453
+msgid "Wrong payment amount (Out of range)"
+msgstr ""
+
+#: commerce_expay.module:471
+msgid "Please enter a valid information for \"@field\"."
+msgstr ""
+
+#: commerce_expay.module:576
+msgid "Customer payment submission failed at the payment gateway."
+msgstr ""
+
+#: commerce_expay.module:586 includes/commerce_expay.checkout_pane.inc:64
+msgid "Cancel and return"
+msgstr ""
+
+#: commerce_expay.module:600
+msgid "Continue on @method"
+msgstr ""
+
+#: commerce_expay.module:631
+msgid "Customer successfully submitted payment at the payment gateway."
+msgstr ""
+
+#: commerce_expay.module:724
+msgid "Your transaction was canceled. Please try again."
+msgstr ""
+
+#: commerce_expay.module:735
+msgid "Transaction canceled by user on cancel URL"
+msgstr ""
+
+#: commerce_expay.module:108;196;540;650;656;670;700;717;739 includes/commerce_expay.inc:99;116;131;160;169;176;182;189;202;209;307;312;481
+msgid "commerce_expay"
+msgstr ""
+
+#: commerce_expay.module:108
+msgid "Callback redirect: <br /> <pre>@params</pre>"
+msgstr ""
+
+#: commerce_expay.module:196
+msgid "Callback notification: <br /> <pre>@notificaation</pre>"
+msgstr ""
+
+#: commerce_expay.module:540
+msgid "Commerce payment transaction @id canceled on redirect form"
+msgstr ""
+
+#: commerce_expay.module:650
+msgid "Empty params for order @order during return redirect"
+msgstr ""
+
+#: commerce_expay.module:656
+msgid "Missing required params for order @order during return redirect"
+msgstr ""
+
+#: commerce_expay.module:670;717
+msgid "Transaction remote_id = @remote_id, order =  @order was not found"
+msgstr ""
+
+#: commerce_expay.module:700
+msgid "Wrong params for order @order during back redirect"
+msgstr ""
+
+#: commerce_expay.module:739
+msgid "No transaction was found in order @order during back redirect"
+msgstr ""
+
+#: commerce_expay.module:28
+msgid "Expay settings"
+msgstr ""
+
+#: commerce_expay.module:29
+msgid "Configure Expay merchant settings"
+msgstr ""
+
+#: commerce_expay.info:0
+msgid "Implements Expay payment services for use with Drupal Commerce."
+msgstr ""
+
+#: commerce_expay.info:0
+msgid "Commerce (Expay)"
+msgstr ""
+
+#: includes/commerce_expay.checkout_pane.inc:44
+msgid "Attention! Save the document to pay before closing the page!"
+msgstr ""
+
+#: includes/commerce_expay.checkout_pane.inc:60
+msgid "View order"
+msgstr ""
+
+#: includes/commerce_expay.checkout_pane.inc:74
+msgid "Continue buying"
+msgstr ""
+
+#: includes/commerce_expay.checkout_pane.inc:97
+msgid "Customer canceled order on checkout complete."
+msgstr ""
+
+#: includes/commerce_expay.checkout_pane.inc:110
+msgid "Transaction canceled on order complete."
+msgstr ""
+
+#: includes/commerce_expay.inc:60
+msgid "Message - @message. Code - @code"
+msgstr ""
+
+#: includes/commerce_expay.inc:316
+msgid "Transaction updated on getStatus with status @status"
+msgstr ""
+
+#: includes/commerce_expay.inc:99
+msgid "Expay pymentMethods response: <br /> <pre>@methods</pre>"
+msgstr ""
+
+#: includes/commerce_expay.inc:116
+msgid "Expay initPayment params: <br /> <pre>@params</pre>"
+msgstr ""
+
+#: includes/commerce_expay.inc:131
+msgid "Expay initPayment response: <br /> <pre>@payment</pre>"
+msgstr ""
+
+#: includes/commerce_expay.inc:160
+msgid "Expay callback load transaction empty with (m-@m, id-@id, order-@order) "
+msgstr ""
+
+#: includes/commerce_expay.inc:169
+msgid "Expay callback @m transaction @transaction_id payload expay payment empty."
+msgstr ""
+
+#: includes/commerce_expay.inc:176
+msgid "Expay callback @m transaction @transaction_id payload order != @order ."
+msgstr ""
+
+#: includes/commerce_expay.inc:182
+msgid "Expay callback @m transaction @transaction_id payload id != @id ."
+msgstr ""
+
+#: includes/commerce_expay.inc:189
+msgid "Expay callback @m transaction @transaction_id expired @time ."
+msgstr ""
+
+#: includes/commerce_expay.inc:202
+msgid "Expay callback @m transaction @transaction_id payload method id != @service_id."
+msgstr ""
+
+#: includes/commerce_expay.inc:209
+msgid "Expay callback @m transaction @transaction_id amount != @amount ."
+msgstr ""
+
+#: includes/commerce_expay.inc:307
+msgid "Expay getStatus returned empty object"
+msgstr ""
+
+#: includes/commerce_expay.inc:312
+msgid "Request getStatus: <br /> <pre>@remote</pre>"
+msgstr ""
+
+#: includes/commerce_expay.inc:481
+msgid "Wrong extension @extension for @url"
+msgstr ""
+

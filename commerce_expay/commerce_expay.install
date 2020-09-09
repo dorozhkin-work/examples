@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * @file
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function commerce_expay_uninstall() {
+  variable_del('commerce_expay_host');
+  variable_del('commerce_expay_merchant_id');
+  variable_del('commerce_expay_merchant_sk');
+  variable_del('commerce_expay_allowed_ips');
+  variable_del('commerce_expay_debug_mode');
+  variable_del('commerce_expay_logos_local_only');
+  variable_del('commerce_expay_cron_time_offset');
+  variable_del('commerce_expay_cron_range');
+  variable_del('commerce_expay_callback_expire');
+  variable_del('commerce_expay_logos_directory');
+  variable_del('commerce_expay_remote_id_pattern');
+  variable_del('commerce_expay_remote_id_prefix');
+}
