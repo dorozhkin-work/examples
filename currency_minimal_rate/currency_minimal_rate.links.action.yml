@@ -1,0 +1,5 @@
+currency_minimal_rate.import:
+  route_name: currency_minimal_rate.import
+  title: 'Run import'
+  appears_on:
+    - currency_minimal_rate.settings_form

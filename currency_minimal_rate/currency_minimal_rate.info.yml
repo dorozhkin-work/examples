@@ -1,0 +1,5 @@
+name: Currency minimal rate
+type: module
+description: Sample module providing functionality to get lowest currency rate by comparing data from external endpoints.
+package: Custom
+core_version_requirement: ^9 || ^10

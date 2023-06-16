@@ -1,0 +1,14 @@
+services:
+  currency_minimal_rate.storage:
+    class: Drupal\currency_minimal_rate\CurrencyMinimalRateDatabaseStorage
+    arguments: ['@database']
+    tags:
+      - { name: backend_overridable }
+
+  plugin.manager.currency_minimal_rate_provider:
+    class: Drupal\currency_minimal_rate\CurrencyMinimalRateProviderPluginManager
+    parent: default_plugin_manager
+
+  currency_minimal_rate.comparator:
+    class: Drupal\currency_minimal_rate\CurrencyMinimalRateComparator
+    arguments: ['@state', '@logger.factory', '@plugin.manager.currency_minimal_rate_provider', '@currency_minimal_rate.storage', '@config.factory']

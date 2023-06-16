@@ -1,0 +1,6 @@
+currency_minimal_rate.settings_form:
+  title: 'Currency minimal rate'
+  description: 'Configure currency minimal rate.'
+  parent: system.admin_config
+  route_name: currency_minimal_rate.settings_form
+  weight: 10

@@ -1,0 +1,16 @@
+currency_minimal_rate.import:
+  path: '/admin/config/currency-minimal-rate/import'
+  defaults:
+    _controller: '\Drupal\currency_minimal_rate\Controller\CurrencyMinimalRateController::import'
+  requirements:
+    _permission: 'administer currency minimal rate configuration'
+  options:
+    _admin_route: TRUE
+
+currency_minimal_rate.settings_form:
+  path: '/admin/config/currency-minimal-rate'
+  defaults:
+    _title: 'Currency minimal rate settings'
+    _form: 'Drupal\currency_minimal_rate\Form\SettingsForm'
+  requirements:
+    _permission: 'administer currency minimal rate configuration'

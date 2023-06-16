@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for Currency minimal rate module.
+ */
+
+/**
+ * Implements hook_cron().
+ */
+function currency_minimal_rate_cron() {
+  \Drupal::service('currency_minimal_rate.comparator')->execute();
+}

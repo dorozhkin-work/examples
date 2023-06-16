@@ -1,0 +1,8 @@
+# Schema for the configuration files of the Currency minimal rate module.
+currency_minimal_rate.settings:
+  type: config_object
+  label: 'Currency minimal rate settings'
+  mapping:
+    debug:
+      type: boolean
+      label: 'Debug'
